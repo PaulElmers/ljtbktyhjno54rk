@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Інтерактивні блоки</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    #container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+    .block {
+        flex: 1;
+        border: 1px solid black;
+        box-sizing: border-box;
+        transition: flex 0.5s ease;
+        overflow: hidden;
+    }
+    #left-block {
+        background-color: lightblue;
+        overflow: hidden;
+    }
+    #right-block {
+        background-color: lightgreen;
+        overflow: hidden;
+    }
+    #slider {
+        flex: 0;
+        background-color: grey;
+        cursor: pointer;
+        transition: transform 0.5s ease;
+    }
+    #slider:hover {
+        transform: scale(1.1);
+    }
+</style>
+</head>
+<body>
+    <div id="container">
+        <div id="left-block" class="block">
+            Left Block
+        </div>
+        <div id="slider">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Arrow_Up_Gradient.svg/1024px-Arrow_Up_Gradient.svg.png" alt="Toggle">
+        </div>
+        <div id="right-block" class="block">
+            Right Block
+        </div>
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#slider').click(function(){
+            $('#left-block').toggleClass('hidden');
+            if($('#left-block').hasClass('hidden')) {
+                $(this).css('transform', 'rotate(180deg)');
+            } else {
+                $(this).css('transform', 'rotate(0deg)');
+            }
+        });
+
+        var mouseY = 0;
+        $('#container').mousemove(function(event){
+            mouseY = event.clientY;
+        });
+
+        $('#slider').mousedown(function(){
+            $(document).mousemove(function(event){
+                var sliderTop = $('#slider').offset().top;
+                var sliderHeight = $('#slider').outerHeight();
+                var topBlock = $('#left-block');
+                var bottomBlock = $('#right-block');
+                var containerHeight = $('#container').height();
+
+                var newTopBlockHeight = mouseY - sliderTop;
+                var newBottomBlockHeight = containerHeight - newTopBlockHeight - sliderHeight;
+
+                if(newTopBlockHeight < 100) newTopBlockHeight = 100;
+                if(newBottomBlockHeight < 100) newBottomBlockHeight = 100;
+
+                topBlock.height(newTopBlockHeight);
+                bottomBlock.height(newBottomBlockHeight);
+            });
+        });
+
+        $(document).mouseup(function(){
+            $(document).off('mousemove');
+        });
+    });
+</script>
+</body>
+</html>
